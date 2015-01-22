@@ -20,11 +20,11 @@ func main() {
 		fmt.Error("Unable to create Graylog message.")
 	}
 
-  // Add additional fields to the returned message object.
+	// Add additional fields to the returned message object.
 	gelfMessage.Add("_HTTPMethod", "GET")
 	gelfMessage.Add("_ResponseCode", 301)
 
-  // Print the message in JSON format to stdout.
+	// Print the message in JSON format to stdout.
 	fmt.Println(testMessage.String())
 }
 ```
