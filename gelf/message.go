@@ -46,6 +46,10 @@ func NewMessage(l Level, short string, full string) (*Message, error) {
 	}, nil
 }
 
+func typeOf(v interface{}) string {
+	return fmt.Sprintf("%T", v)
+}
+
 // Add will add additional fields to a message in the form of a key and value
 // pair. Values can be of string or int type.
 func (m *Message) Add(key string, value interface{}) error {
@@ -55,6 +59,11 @@ func (m *Message) Add(key string, value interface{}) error {
 		if key == rf {
 			return fmt.Errorf("Invalid field[%s]", key)
 		}
+	}
+
+	// Verify value is a string or int.
+	if typeOf(value) != "string" && typeOf(value) != "int64" && typeOf(value) != "int" {
+		return fmt.Errorf("Invalid field type[%s]", typeOf(value))
 	}
 
 	// Verify underscore prefix
