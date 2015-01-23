@@ -7,6 +7,6 @@ const (
 	// Version is the library version.
 	Version = "1.1.0"
 
-	// Version is the Graylog2 Extended Log Format version.
+	// GELFVersion is the Graylog2 Extended Log Format version.
 	GELFVersion = "1.1"
 )

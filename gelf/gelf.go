@@ -2,8 +2,10 @@
 
 package gelf
 
+// Level is a generic type for severity.
 type Level int
 
+// Levels matching RFC5424 severity.
 const (
 	LevelPanic Level = iota
 	LevelAlert
