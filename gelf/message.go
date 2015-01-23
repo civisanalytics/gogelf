@@ -71,6 +71,11 @@ func (m *Message) Add(key string, value interface{}) error {
 // String is a convience method that meets the fmt.String interface providing an
 // easy way to print the string JSON representation of a message.
 func (m *Message) String() string {
+	if len(m.additional) == 0 {
+		baseMessageFields, _ := json.Marshal(m)
+		return string(baseMessageFields)
+	}
+
 	// Maps do not marshal to JSON as top-level objects.
 	// To work around we marshal the map of additional fields, modify the string
 	// and append to the outbound JSON encoded struct.
