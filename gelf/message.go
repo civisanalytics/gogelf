@@ -51,7 +51,7 @@ func typeOf(v interface{}) string {
 }
 
 // Add will add additional fields to a message in the form of a key and value
-// pair. Values can be of string or int type.
+// pair. Values can be of JavaScript string or number type.
 func (m *Message) Add(key string, value interface{}) error {
 	// Verify additional fields against reserved field names.
 	// If field is not reserved, add to message.
@@ -61,8 +61,8 @@ func (m *Message) Add(key string, value interface{}) error {
 		}
 	}
 
-	// Verify value is a string or int.
-	if typeOf(value) != "string" && typeOf(value) != "int64" && typeOf(value) != "int" {
+	// Verify value is a JavaScript string or number.
+	if typeOf(value) != "string" && typeOf(value) != "float64" && typeOf(value) != "int" {
 		return fmt.Errorf("Invalid field type[%s]", typeOf(value))
 	}
 
