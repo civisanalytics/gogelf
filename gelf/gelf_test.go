@@ -8,10 +8,7 @@ import (
 )
 
 func TestPanicMessage(t *testing.T) {
-	testMessage, err := Panic("This is a panic test message.", "This is a long panic test message.\nIt includes multiple lines.")
-	if err != nil {
-		t.Error("Unable to create Graylog message.")
-	}
+	testMessage := Panic("This is a panic test message.", "This is a long panic test message.\nIt includes multiple lines.")
 
 	fmt.Println(testMessage.String())
 }

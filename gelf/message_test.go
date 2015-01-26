@@ -8,10 +8,7 @@ import (
 )
 
 func TestAdditionalFields(t *testing.T) {
-	testMessage, err := Info("This is a short test message.", "This is a long test message.\nIt includes multiple lines.")
-	if err != nil {
-		t.Error("Unable to create Graylog message.")
-	}
+	testMessage := Info("This is a short test message.", "This is a long test message.\nIt includes multiple lines.")
 
 	testMessage.Add("_StringType", "This is a string.")
 	testMessage.Add("_IntegerType", 31)
@@ -20,10 +17,7 @@ func TestAdditionalFields(t *testing.T) {
 }
 
 func TestInvalidFieldNames(t *testing.T) {
-	testMessage, err := Info("This is a short test message.", "This is a long test message.\nIt includes multiple lines.")
-	if err != nil {
-		t.Error("Unable to create Graylog message.")
-	}
+	testMessage := Info("This is a short test message.", "This is a long test message.\nIt includes multiple lines.")
 
 	testMessage.Add("_id", "This is an invalid additional field.")
 	testMessage.Add("host", "This is an invalid additional field.")

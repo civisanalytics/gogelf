@@ -27,12 +27,14 @@ type Message struct {
 var reservedFields = []string{"version", "host", "short_message", "full_message", "timestamp", "level", "_id"}
 
 // NewMessage returns a new Graylog2 Extended Log Format message.
-func NewMessage(l Level, short string, full string) (*Message, error) {
+func NewMessage(l Level, short string, full string) *Message {
+	var host string
+
 	a := make(map[string]interface{})
 
 	host, err := os.Hostname()
 	if err != nil {
-		return nil, err
+		host = "localhost"
 	}
 
 	return &Message{
@@ -43,7 +45,7 @@ func NewMessage(l Level, short string, full string) (*Message, error) {
 		Timestamp:    time.Now().UnixNano(),
 		Level:        l,
 		additional:   a,
-	}, nil
+	}
 }
 
 func typeOf(v interface{}) string {
