@@ -30,6 +30,7 @@ type Remote int
 
 const (
 	RemoteStdout Remote = iota
+	RemoteStderr
 	RemoteUdp
 )
 
@@ -50,6 +51,8 @@ func init() {
 
 func SetRemote(r Remote) (err error) {
 	if r == RemoteStdout {
+		remote = r
+	} else if r == RemoteStderr {
 		remote = r
 	} else if r == RemoteUdp {
 		return errors.New("UDP not yet implemented")
@@ -129,6 +132,8 @@ func (m *Message) String() string {
 func (m *Message) Send() {
 	if remote == RemoteStdout {
 		fmt.Println(m.String())
+	} else if remote == RemoteStderr {
+		fmt.Fprintf(os.Stderr, "%s\n", m.String())
 	} else if remote == RemoteUdp {
 		// TODO: implement UDP
 	}
