@@ -19,7 +19,7 @@ type Message struct {
 	Host             string                 `json:"host"`
 	ShortMessage     string                 `json:"short_message"`
 	FullMessage      string                 `json:"full_message,omitempty"`
-	Timestamp        int64                  `json:"timestamp"`
+	Timestamp        float64                `json:"timestamp"`
 	Level            Level                  `json:"level"`
 	AdditionalFields string                 `json:",omitempty"`
 	additional       map[string]interface{} `json:"a,omitempty"`
@@ -71,7 +71,7 @@ func NewMessage(l Level, short string, full string) *Message {
 		Host:         host,
 		ShortMessage: short,
 		FullMessage:  full,
-		Timestamp:    time.Now().UnixNano(),
+		Timestamp:    float64(time.Now().UnixNano()) / 1e9,
 		Level:        l,
 		additional:   a,
 	}
