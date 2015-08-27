@@ -5,6 +5,7 @@ package gelf
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestAdditionalFields(t *testing.T) {
@@ -27,10 +28,11 @@ func TestInvalidFieldNames(t *testing.T) {
 	testMessage.Send()
 }
 
-func TestTimestamp(t *testing.T) {
-	testMessage := NewMessage(LevelInfo, "This is a short test message.", "This is a long test message.")
-	if testMessage.Timestamp < 1e9 || testMessage.Timestamp > 1e10 {
-		t.Errorf("Wanted a timestamp in seconds since epoch, got %f")
+func TestGelfTime(t *testing.T) {
+	gt := gelfTime{time.Unix(1234567, 890123000)}
+	expected := "1234567.890123"
+	if gt.String() != expected {
+		t.Errorf("Error formatting string. Expected %s, got %s", expected, gt.String())
 	}
 }
 

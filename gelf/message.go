@@ -12,6 +12,22 @@ import (
 	"unicode/utf8"
 )
 
+type gelfTime struct {
+	Time time.Time
+}
+
+func (t gelfTime) String() string {
+	return fmt.Sprintf("%.6f", float64(t.Time.UnixNano())/1e9)
+}
+
+func (t gelfTime) MarshalText() ([]byte, error) {
+	return []byte(t.String()), nil
+}
+
+func (t gelfTime) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + t.String() + `"`), nil
+}
+
 // Message meets the Graylog2 Extended Log Format.
 // http://graylog2.org/gelf#specs
 type Message struct {
@@ -19,7 +35,7 @@ type Message struct {
 	Host             string                 `json:"host"`
 	ShortMessage     string                 `json:"short_message"`
 	FullMessage      string                 `json:"full_message,omitempty"`
-	Timestamp        float64                `json:"timestamp"`
+	Timestamp        gelfTime               `json:"timestamp"`
 	Level            Level                  `json:"level"`
 	AdditionalFields string                 `json:",omitempty"`
 	additional       map[string]interface{} `json:"a,omitempty"`
@@ -71,7 +87,7 @@ func NewMessage(l Level, short string, full string) *Message {
 		Host:         host,
 		ShortMessage: short,
 		FullMessage:  full,
-		Timestamp:    float64(time.Now().UnixNano()) / 1e9,
+		Timestamp:    gelfTime{time.Now()},
 		Level:        l,
 		additional:   a,
 	}
