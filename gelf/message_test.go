@@ -4,7 +4,9 @@ package gelf
 
 import (
 	"fmt"
+	"math"
 	"testing"
+	"time"
 )
 
 func TestAdditionalFields(t *testing.T) {
@@ -25,6 +27,14 @@ func TestInvalidFieldNames(t *testing.T) {
 	testMessage.Add("timestamp", 31)
 
 	testMessage.Send()
+}
+
+func TestTimestamp(t *testing.T) {
+	now := float64(time.Now().Unix())
+	testMessage := NewMessage(LevelInfo, "This is a short test message.", "This is a long test message.")
+	if math.Abs(testMessage.Timestamp-now) > 1 {
+		t.Errorf("Wanted a timestamp in seconds since epoch, got %f")
+	}
 }
 
 func BenchmarkMessageCreation(b *testing.B) {
