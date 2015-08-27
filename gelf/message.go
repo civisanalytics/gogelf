@@ -12,20 +12,50 @@ import (
 	"unicode/utf8"
 )
 
+// gelfTime is a small wrapper around time.Time with methods
+// for marshalling and unmarshalling JSON.
 type gelfTime struct {
 	Time time.Time
 }
 
-func (t gelfTime) String() string {
-	return fmt.Sprintf("%.6f", float64(t.Time.UnixNano())/1e9)
+// MarshalJSON returns a slice of bytes in the form
+// "seconds.milliseconds".
+func (t *gelfTime) MarshalJSON() ([]byte, error) {
+	asString := fmt.Sprintf("%.6f", float64(t.Time.UnixNano())/1e9)
+	return []byte(asString), nil
 }
 
-func (t gelfTime) MarshalText() ([]byte, error) {
-	return []byte(t.String()), nil
-}
+// UnmarshalJSON parses a gelfTime struct from a
+// "seconds.milliseconds" byte slice.
+func (t *gelfTime) UnmarshalJSON(raw []byte) (err error) {
+	var secRaw, nsecRaw []byte
+	sep := byte('.')
+	inFrac := false
+	for _, b := range raw {
+		if inFrac {
+			nsecRaw = append(nsecRaw, b)
+		} else if b == sep {
+			inFrac = true
+		} else {
+			secRaw = append(secRaw, b)
+		}
+	}
 
-func (t gelfTime) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + t.String() + `"`), nil
+	var sec, nsec int64
+
+	err = json.Unmarshal(secRaw, &sec)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(nsecRaw, &nsec)
+	if err != nil {
+		return
+	}
+	nsec *= 1000
+
+	*t = gelfTime{time.Unix(sec, nsec)}
+	return
 }
 
 // Message meets the Graylog2 Extended Log Format.
@@ -35,7 +65,7 @@ type Message struct {
 	Host             string                 `json:"host"`
 	ShortMessage     string                 `json:"short_message"`
 	FullMessage      string                 `json:"full_message,omitempty"`
-	Timestamp        gelfTime               `json:"timestamp"`
+	Timestamp        *gelfTime              `json:"timestamp"`
 	Level            Level                  `json:"level"`
 	AdditionalFields string                 `json:",omitempty"`
 	additional       map[string]interface{} `json:"a,omitempty"`
@@ -87,7 +117,7 @@ func NewMessage(l Level, short string, full string) *Message {
 		Host:         host,
 		ShortMessage: short,
 		FullMessage:  full,
-		Timestamp:    gelfTime{time.Now()},
+		Timestamp:    &gelfTime{time.Now()},
 		Level:        l,
 		additional:   a,
 	}
